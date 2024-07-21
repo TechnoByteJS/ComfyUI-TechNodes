@@ -1,0 +1,14 @@
+[project]
+name = "comfyui-technodes"
+description = "ComfyUI nodes for merging, testing and more. SDNext Merge, VAE Merge, MBW Layers, Repeat VAE, Quantization."
+version = "1.0.0"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/TechnoByteJS/ComfyUI-TechNodes"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI-TechNodes"
+Icon = ""
