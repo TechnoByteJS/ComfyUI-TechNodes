@@ -14,6 +14,8 @@ from .merge_rebasin import (
 from .merge_PermSpec import sdunet_permutation_spec
 from .merge_PermSpec_SDXL import sdxl_permutation_spec
 
+from tqdm import tqdm
+
 import comfy.utils
 import comfy.model_management
 
@@ -217,16 +219,12 @@ def simple_merge(
 	threads: int = 4,
 ) -> Dict:
 	futures = []
-	# with tqdm(thetas["model_a"].keys(), desc="Merge") as progress:
-	import rich.progress as p
-	with p.Progress(p.TextColumn('[cyan]{task.description}'), p.BarColumn(), p.TaskProgressColumn(), p.TimeRemainingColumn(), p.TimeElapsedColumn(), p.TextColumn('[cyan]keys={task.fields[keys]}')) as progress:
-		task = progress.add_task(description="Merging", total=len(thetas["model_a"].keys()), keys=len(thetas["model_a"].keys()))
+	with tqdm(thetas["model_a"].keys(), desc="Merge") as progress:
 		with ThreadPoolExecutor(max_workers=threads) as executor:
 			for key in thetas["model_a"].keys():
 				future = executor.submit(
 					simple_merge_key,
 					progress,
-					task,
 					key,
 					thetas,
 					weight_matcher,
@@ -325,11 +323,11 @@ def rebasin_merge(
 	return thetas["model_a"]
 
 
-def simple_merge_key(progress, task, key, thetas, *args, **kwargs):
+def simple_merge_key(progress, key, thetas, *args, **kwargs):
 	with merge_key_context(key, thetas, *args, **kwargs) as result:
 		if result is not None:
 			thetas["model_a"].update({key: result.detach().clone()})
-	progress.update(task, advance=1)
+	progress.update(1)
 
 
 def merge_key(  # pylint: disable=inconsistent-return-statements
