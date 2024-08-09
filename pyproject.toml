@@ -9,6 +9,6 @@ Repository = "https://github.com/TechnoByteJS/ComfyUI-TechNodes"
 #  Used by Comfy Registry https://comfyregistry.org
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "technobyte"
 DisplayName = "ComfyUI-TechNodes"
 Icon = ""
