@@ -76,31 +76,31 @@ def train_difference(a: Tensor, b: Tensor, c: Tensor, alpha: float, **kwargs):  
 	# Based on: https://github.com/hako-mikan/sd-webui-supermerger/blob/843ca282948dbd3fac1246fcb1b66544a371778b/scripts/mergers/mergers.py#L673
 
 	# Calculate the difference between b and c
-	diff_AB = b.float() - c.float()
+	diff_BC = b - c
 
 	# Early exit if there's no difference
-	if torch.all(diff_AB == 0):
+	if torch.all(diff_BC == 0):
 		return a
 
 	# Calculate distances
-	distance_A0 = torch.abs(b.float() - c.float())
-	distance_A1 = torch.abs(b.float() - a.float())
+	distance_BC = torch.abs(diff_BC)
+	distance_BA = torch.abs(b - a)
 
 	# Sum of distances
-	sum_distances = distance_A0 + distance_A1
+	sum_distances = distance_BC + distance_BA
 
 	# Calculate scale, avoiding division by zero
-	scale = torch.where(sum_distances != 0, distance_A1 / sum_distances, torch.tensor(0.).float())
+	scale = torch.where(sum_distances != 0, distance_BA / sum_distances, torch.tensor(0.))
 
 	# Adjust scale sign based on the difference between b and c
-	sign_scale = torch.sign(b.float() - c.float())
+	sign_scale = torch.sign(diff_BC)
 	scale = sign_scale * torch.abs(scale)
 
 	# Calculate new difference
-	new_diff = scale * torch.abs(diff_AB)
+	new_diff = scale * distance_BC
 
 	# Return updated a
-	return a + (new_diff * (alpha*1.8))
+	return a + (new_diff * (alpha * 1.8))
 
 
 def sum_twice(a: Tensor, b: Tensor, c: Tensor, alpha: float, beta: float, **kwargs) -> Tensor:  # pylint: disable=unused-argument
