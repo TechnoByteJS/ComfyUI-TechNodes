@@ -78,6 +78,10 @@ def train_difference(a: Tensor, b: Tensor, c: Tensor, alpha: float, **kwargs):  
 	# Calculate the difference between b and c
 	diff_AB = b.float() - c.float()
 
+	# Early exit if there's no difference
+	if torch.all(diff_AB == 0):
+		return a
+
 	# Calculate distances
 	distance_A0 = torch.abs(b.float() - c.float())
 	distance_A1 = torch.abs(b.float() - a.float())
