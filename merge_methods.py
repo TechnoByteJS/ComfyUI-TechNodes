@@ -9,6 +9,7 @@ __all__ = [
 	"weighted_subtraction",
 	"tensor_sum",
 	"add_difference",
+	"train_difference",
 	"sum_twice",
 	"triple_sum",
 	"euclidean_add_difference",
@@ -70,6 +71,32 @@ def add_difference(a: Tensor, b: Tensor, c: Tensor, alpha: float, **kwargs) -> T
 	Classic Add Difference Merge
 	"""
 	return a + alpha * (b - c)
+
+def train_difference(a: Tensor, b: Tensor, c: Tensor, alpha: float, **kwargs):  # pylint: disable=unused-argument
+	# Based on: https://github.com/hako-mikan/sd-webui-supermerger/blob/843ca282948dbd3fac1246fcb1b66544a371778b/scripts/mergers/mergers.py#L673
+
+	# Calculate the difference between b and c
+	diff_AB = b.float() - c.float()
+
+	# Calculate distances
+	distance_A0 = torch.abs(b.float() - c.float())
+	distance_A1 = torch.abs(b.float() - a.float())
+
+	# Sum of distances
+	sum_distances = distance_A0 + distance_A1
+
+	# Calculate scale, avoiding division by zero
+	scale = torch.where(sum_distances != 0, distance_A1 / sum_distances, torch.tensor(0.).float())
+
+	# Adjust scale sign based on the difference between b and c
+	sign_scale = torch.sign(b.float() - c.float())
+	scale = sign_scale * torch.abs(scale)
+
+	# Calculate new difference
+	new_diff = scale * torch.abs(diff_AB)
+
+	# Return updated a
+	return a + (new_diff * (alpha*1.8))
 
 
 def sum_twice(a: Tensor, b: Tensor, c: Tensor, alpha: float, beta: float, **kwargs) -> Tensor:  # pylint: disable=unused-argument

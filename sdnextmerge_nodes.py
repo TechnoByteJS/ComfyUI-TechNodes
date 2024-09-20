@@ -77,6 +77,7 @@ class SDNextMerge:
 					"weighted_subtraction",
 					"tensor_sum",
 					"add_difference",
+					"train_difference",
 					"sum_twice",
 					"triple_sum",
 					"euclidean_add_difference",
@@ -130,7 +131,7 @@ class SDNextMerge:
 				models['model_b'] = folder_paths.get_full_path("checkpoints", model_b)
 
 		# Add model C if the merge method needs it
-		if merge_mode in ["add_difference", "sum_twice", "triple_sum", "euclidean_add_difference", "multiply_difference", "similarity_add_difference", "distribution_crossover", "ties_add_difference"]:
+		if merge_mode in ["add_difference", "train_difference", "sum_twice", "triple_sum", "euclidean_add_difference", "multiply_difference", "similarity_add_difference", "distribution_crossover", "ties_add_difference"]:
 			if model_c == "none" and optional_model_c is None:
 				raise ValueError("Need either model_c or optional_model_c!")
 
